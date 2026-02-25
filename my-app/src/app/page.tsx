@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { supabase } from '@/utils/supabase';
 
 function PreChatForm() {
@@ -15,6 +15,25 @@ function PreChatForm() {
   const [userNeed, setUserNeed] = useState<string>("Reflect");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isFirstSession, setIsFirstSession] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (userId && condition === 'experimental') {
+      const checkFirstSession = async () => {
+        const { data, error } = await supabase
+          .from('sessions')
+          .select('id')
+          .eq('user_id', userId)
+          .eq('condition', 'experimental')
+          .limit(1);
+          
+        if (!error && data) {
+          setIsFirstSession(data.length === 0);
+        }
+      };
+      checkFirstSession();
+    }
+  }, [userId, condition]);
 
   if (!userId) {
     return (
@@ -41,16 +60,17 @@ function PreChatForm() {
       if (userError) throw userError;
 
       // 2. Check if this is the "First Session" for the Experimental Condition to route them to Onboarding
-      let isFirstSession = false;
+      let isFirst = false;
       if (condition === 'experimental') {
         const { data: userSessions, error: sessionErr } = await supabase
           .from('sessions')
           .select('id')
           .eq('user_id', userId)
-          .eq('condition', 'experimental');
+          .eq('condition', 'experimental')
+          .limit(1);
           
         if (sessionErr) throw sessionErr;
-        isFirstSession = userSessions.length === 0;
+        isFirst = userSessions.length === 0;
       }
 
       // 3. Create the Session
@@ -60,7 +80,7 @@ function PreChatForm() {
           user_id: userId,
           condition: condition,
           pre_stress: preStress,
-          user_need: (condition === 'experimental' && !isFirstSession) ? userNeed : null
+          user_need: (condition === 'experimental' && !isFirst) ? userNeed : null
         })
         .select()
         .single();
@@ -122,9 +142,13 @@ function PreChatForm() {
                   <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed mt-2 pt-2">
-                * Note: If this is your very first session, the AI will prioritize defining your preferred personality and support style.
-              </p>
+              {isFirstSession !== null && (
+                <p className="text-sm text-slate-600 font-medium bg-blue-50 p-4 rounded-xl leading-relaxed mt-6 border border-blue-100">
+                  {isFirstSession
+                    ? "👋 Hi! This is your first session, so we will be focusing on defining your preferred personality and support style today."
+                    : "👋 Welcome back to another session!"}
+                </p>
+              )}
             </div>
           )}
 
