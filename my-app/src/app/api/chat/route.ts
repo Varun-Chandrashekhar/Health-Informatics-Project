@@ -45,6 +45,23 @@ export async function POST(req: Request) {
           sessionInfo.users.experimental_persona, 
           sessionInfo.user_need || "Reflect"
         );
+
+        // Fetch past messages for memory context across sessions
+        const { data: pastMessages, error: pastErr } = await supabase
+          .from('messages')
+          .select('role, content')
+          .eq('user_id', sessionInfo.user_id)
+          .neq('session_id', sessionId)
+          .order('created_at', { ascending: false })
+          .limit(30);
+          
+        if (!pastErr && pastMessages && pastMessages.length > 0) {
+          const chronological = pastMessages.reverse();
+          const memoryContext = `\n\n=== CRITICAL INSTRUCTION: PAST SESSION MEMORY ===\nBelow is a transcript of your previous conversations with this user from past days. You MUST review these to recognize the user, recall their past context (names, situations), and track their coping strategies over time.\n\n[START PAST TRANSCRIPT]\n` + 
+            chronological.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n') + `\n[END PAST TRANSCRIPT]\n=================================================\n`;
+          
+          systemPrompt += memoryContext;
+        }
       }
     }
 
