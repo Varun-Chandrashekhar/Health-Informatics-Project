@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase';
 
-export default function FeedbackPage({ params }: { params: { session_id: string } }) {
+export default function FeedbackPage({ params }: { params: Promise<{ session_id: string }> }) {
   const router = useRouter();
-  const sessionId = params.session_id;
+  const { session_id: sessionId } = use(params);
 
   const [postStress, setPostStress] = useState<number>(5);
   const [helpfulness, setHelpfulness] = useState<number>(3);

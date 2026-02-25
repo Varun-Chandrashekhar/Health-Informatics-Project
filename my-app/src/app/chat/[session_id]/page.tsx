@@ -4,10 +4,11 @@ import { useChat } from '@ai-sdk/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Send, LogOut } from 'lucide-react';
+import { use } from 'react';
 
-export default function ChatPage({ params }: { params: { session_id: string } }) {
+export default function ChatPage({ params }: { params: Promise<{ session_id: string }> }) {
   const router = useRouter();
-  const sessionId = params.session_id;
+  const { session_id: sessionId } = use(params);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
