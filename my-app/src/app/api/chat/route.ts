@@ -1,5 +1,6 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { streamText, generateObject } from 'ai';
+import { z } from 'zod';
 import { supabase } from '@/utils/supabase';
 import { CONTROL_PROMPT, getExperimentalPrompt, ONBOARDING_PROMPT } from '@/utils/prompts';
 
@@ -28,13 +29,14 @@ export async function POST(req: Request) {
 
     // 2. Determine the System Prompt
     let systemPrompt = "";
+    let hasPersona = false;
 
     if (sessionInfo.condition === 'control') {
       systemPrompt = CONTROL_PROMPT;
     } else {
       // Experimental Condition Logic
       // If there's no stored experimental_persona yet, this is the very first session.
-      const hasPersona = !!sessionInfo.users.experimental_persona;
+      hasPersona = !!sessionInfo.users.experimental_persona;
       
       if (!hasPersona) {
         systemPrompt = ONBOARDING_PROMPT;
@@ -56,11 +58,32 @@ export async function POST(req: Request) {
         content: userMessage.content,
       });
 
-      // Special Case: If this is the experimental onboarding session and the user has stated their persona preference,
-      // we could theoretically use a tool or structured output to automatically save it. 
-      // For the simplicity of this API route, we are relying on the researcher or another mechanism 
-      // to finalize the persona, OR we could do a quick LLM check here. 
-      // TO IMPLEMENT LATER: Auto-extracting the persona if `hasPersona` is false.
+      // Special Case: Auto-extract the persona if this is the experimental onboarding session
+      if (!hasPersona && messages.length > 2) {
+        try {
+          // Use AI to extract if they have decided on a tone yet
+          const extractionPrompt = `
+          Analyze the conversation history. Did the user clearly define a preferred chatbot personality/tone?
+          If yes, summarize that exact personality in 1-2 thoughtful sentences.
+          If no, return null.
+          `;
+          
+          const { object } = await generateObject({
+            model: openai('gpt-4o-mini'),
+            schema: z.object({
+              persona: z.string().nullable().describe("The user's chosen persona summary, or null if they haven't decided yet.")
+            }),
+            prompt: extractionPrompt + "\n\nChat History:\n" + messages.map((m: any) => `${m.role}: ${m.content}`).join("\n"),
+          });
+
+          if (object.persona) {
+            await supabase.from('users').update({ experimental_persona: object.persona }).eq('user_id', sessionInfo.user_id);
+            console.log("Auto-saved persona:", object.persona);
+          }
+        } catch (e) {
+          console.error("Failed to auto-extract persona:", e);
+        }
+      }
     }
 
     // 4. Stream chat from OpenAI
