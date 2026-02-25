@@ -15,7 +15,8 @@ CREATE TABLE sessions (
   user_need TEXT,
   post_stress INTEGER,
   helpfulness_rating INTEGER,
-  open_ended_response TEXT
+  open_ended_response TEXT,
+  session_summary TEXT
 );
 
 -- Messages table

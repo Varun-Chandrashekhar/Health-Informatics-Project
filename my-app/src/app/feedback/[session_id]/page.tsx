@@ -33,6 +33,13 @@ export default function FeedbackPage({ params }: { params: Promise<{ session_id:
 
       if (updateError) throw updateError;
       
+      // Fire and forget summarization - do not block the user UI
+      fetch('/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId })
+      }).catch(err => console.error("Summarization hook failed:", err));
+
       setSubmitted(true);
     } catch (err: any) {
       console.error(err);
