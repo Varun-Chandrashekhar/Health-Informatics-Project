@@ -12,7 +12,7 @@ function PreChatForm() {
   const condition = searchParams.get('condition') || 'control'; // default to control
   
   const [preStress, setPreStress] = useState<number>(5);
-  const [userNeed, setUserNeed] = useState<string>("Reflect");
+  const [userNeed, setUserNeed] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFirstSession, setIsFirstSession] = useState<boolean | null>(null);
@@ -126,22 +126,43 @@ function PreChatForm() {
 
           {condition === 'experimental' && (
             <div className="space-y-4 pt-8 border-t border-slate-100">
-              <label className="block text-sm font-bold text-slate-700">How would you like to engage today?</label>
-              <div className="relative">
-                <select 
-                  value={userNeed} 
-                  onChange={(e) => setUserNeed(e.target.value)}
-                  className="w-full p-4 pl-4 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer"
-                >
-                  <option value="Vent">Just vent & express feelings</option>
-                  <option value="Reflect">Reflect on thoughts and emotions</option>
-                  <option value="Coping Strategies">Receive structured coping strategies</option>
-                  <option value="Action Plan">Make a small action plan / goal-setting</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                </div>
-              </div>
+              {isFirstSession === false && (
+                <>
+                  <label className="block text-sm font-bold text-slate-700 mb-3">How would you like to engage today?</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {[
+                      { value: 'Vent', label: 'Just vent & express feelings' },
+                      { value: 'Reflect', label: 'Reflect on thoughts and emotions' },
+                      { value: 'Coping Strategies', label: 'Receive structured coping strategies' },
+                      { value: 'Action Plan', label: 'Make a small action plan / goal' }
+                    ].map((option) => (
+                      <label
+                        key={option.value}
+                        className={`cursor-pointer border rounded-2xl p-4 text-sm font-medium transition-all flex items-center shadow-sm ${
+                          userNeed === option.value
+                            ? 'bg-blue-50 border-blue-500 text-blue-700 ring-1 ring-blue-500/50'
+                            : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="userNeed"
+                          value={option.value}
+                          checked={userNeed === option.value}
+                          onChange={(e) => setUserNeed(e.target.value)}
+                          className="sr-only"
+                        />
+                        <div className={`w-4 h-4 rounded-full border flex-shrink-0 mr-3 flex items-center justify-center transition-colors ${
+                          userNeed === option.value ? 'border-blue-500' : 'border-slate-300'
+                        }`}>
+                          {userNeed === option.value && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                        </div>
+                        {option.label}
+                      </label>
+                    ))}
+                  </div>
+                </>
+              )}
               {isFirstSession !== null && (
                 <p className="text-sm text-slate-600 font-medium bg-blue-50 p-4 rounded-xl leading-relaxed mt-6 border border-blue-100">
                   {isFirstSession
@@ -154,7 +175,7 @@ function PreChatForm() {
 
           <button 
             type="submit" 
-            disabled={loading}
+            disabled={loading || (condition === 'experimental' && isFirstSession === false && !userNeed)}
             className="w-full mt-8 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 px-4 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
           >
             {loading ? (

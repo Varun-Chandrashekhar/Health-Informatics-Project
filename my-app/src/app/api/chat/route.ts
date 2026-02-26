@@ -45,25 +45,28 @@ export async function POST(req: Request) {
           sessionInfo.users.experimental_persona, 
           sessionInfo.user_need || "Reflect"
         );
+      }
+    }
 
-        // Fetch past session summaries for memory context across sessions
-        const { data: pastSessions, error: pastErr } = await supabase
-          .from('sessions')
-          .select('session_summary, started_at')
-          .eq('user_id', sessionInfo.user_id)
-          .eq('condition', 'experimental')
-          .neq('id', sessionId)
-          .not('session_summary', 'is', null)
-          .order('started_at', { ascending: false })
-          .limit(5);
-          
-        if (!pastErr && pastSessions && pastSessions.length > 0) {
-          const chronological = pastSessions.reverse();
-          const memoryContext = `\n\n=== CRITICAL INSTRUCTION: PAST SESSION MEMORY ===\nBelow are summarized transcripts of your previous conversations with this user from past days. You MUST review these to recognize the user, recall their past context (names, situations), and track their coping strategies over time.\n\n[START PAST SUMMARIES]\n` + 
-            chronological.map((s, i) => `Session ${i + 1} (${new Date(s.started_at).toLocaleDateString()}): ${s.session_summary}`).join('\n\n') + `\n[END PAST SUMMARIES]\n=================================================\n`;
-          
-          systemPrompt += memoryContext;
-        }
+    // Apply memory context for both control and established experimental users
+    if (sessionInfo.condition === 'control' || hasPersona) {
+      // Fetch past session summaries for memory context across sessions
+      // We removed the condition constraint so context is retained safely irrespective of crossover bounds
+      const { data: pastSessions, error: pastErr } = await supabase
+        .from('sessions')
+        .select('session_summary, started_at')
+        .eq('user_id', sessionInfo.user_id)
+        .neq('id', sessionId)
+        .not('session_summary', 'is', null)
+        .order('started_at', { ascending: false })
+        .limit(30);
+        
+      if (!pastErr && pastSessions && pastSessions.length > 0) {
+        const chronological = pastSessions.reverse();
+        const memoryContext = `\n\n=== CRITICAL INSTRUCTION: PAST SESSION MEMORY ===\nBelow are summarized transcripts of your previous conversations with this user from past days. You MUST review these to recognize the user, recall their past context (names, situations), and track their coping strategies over time.\n\n[START PAST SUMMARIES]\n` + 
+          chronological.map((s, i) => `Session ${i + 1} (${new Date(s.started_at).toLocaleDateString()}): ${s.session_summary}`).join('\n\n') + `\n[END PAST SUMMARIES]\n=================================================\n`;
+        
+        systemPrompt += memoryContext;
       }
     }
 

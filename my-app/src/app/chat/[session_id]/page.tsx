@@ -18,12 +18,37 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isEnding, setIsEnding] = useState(false);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Reset textarea height when input clears (after submission)
+  useEffect(() => {
+    if (input === '' && textareaRef.current) {
+      textareaRef.current.style.height = 'inherit';
+    }
+  }, [input]);
+
+  const onTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleInputChange(e);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'inherit';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (input.trim() && !isLoading && !isEnding) {
+        e.currentTarget.form?.requestSubmit();
+      }
+    }
+  };
 
   const handleEndSession = () => {
     setIsEnding(true);
@@ -104,18 +129,21 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
 
       {/* Input Area */}
       <div className="flex-none p-4 bg-white border-t border-slate-200">
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto relative flex items-center">
-          <input
-            className="w-full bg-slate-100 text-slate-800 rounded-full pl-6 pr-14 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all shadow-inner text-[15px]"
+        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto relative flex items-end">
+          <textarea
+            ref={textareaRef}
+            className="w-full bg-slate-100 text-slate-800 rounded-3xl pl-6 pr-14 py-4 min-h-[56px] max-h-[200px] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white transition-all shadow-inner text-[15px] resize-none overflow-y-auto"
             value={input}
             placeholder="Type your message here..."
-            onChange={handleInputChange}
+            onChange={onTextareaInput}
+            onKeyDown={handleKeyDown}
             disabled={isLoading || isEnding}
+            rows={1}
           />
           <button 
             type="submit" 
             disabled={isLoading || isEnding || !input.trim()}
-            className="absolute right-2 p-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="absolute right-2 bottom-2 p-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             <Send className="w-4 h-4" />
           </button>
