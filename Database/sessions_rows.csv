@@ -1,0 +1,146 @@
+id,user_id,condition,started_at,completed_at,pre_stress,user_need,post_stress,helpfulness_rating,open_ended_response,session_summary
+02baf6d9-2948-455f-91b5-e2a4f4027f26,participant8,experimental,2026-02-27 00:43:01.927137+00,,5,,,,,
+037125c0-fed4-46e0-a5e8-c0c00b5ebed1,participant3,control,2026-03-01 02:02:26.191434+00,2026-03-01 02:03:50.132+00,2,,2,2,,
+068f02d8-4192-462a-89f0-b9eca5a86884,varun,control,2026-03-01 05:36:34.363521+00,,5,,,,,
+07c4d00d-ad66-42c5-b7da-6d10e06ba2df,mengting,control,2026-02-25 21:14:15.924853+00,2026-02-25 21:23:57.97+00,5,,5,3,,
+0f2a9280-3887-4bc4-ab95-b079761213bc,participant1,control,2026-03-02 02:27:50.91578+00,,7,,,,,
+12b7a1a6-ba88-454e-b6b5-d8cdc2c82fc9,participant4,experimental,2026-03-02 15:20:45.864175+00,2026-03-02 15:23:37.571+00,0,Vent,0,3,Friday night feedback simulation,"1. The main stressful situation discussed was the User's workload and responsibilities, which they temporarily set aside to enjoy a weekend trip with friends. 
+2. The AI suggested coping strategies such as breaking tasks into manageable steps and encouraged the User to focus on enjoying their adventure. 
+3. The User responded positively, indicating they were content with their plans and did not express any immediate concerns, signaling a willingness to enjoy their trip."
+17c47397-596d-46d7-ae8b-92b8dccf58f6,memory_test_user,experimental,2026-02-25 21:49:18.964229+00,,5,Reflect,,,,
+1db9f7bb-fe47-4b81-809a-fa68e6e0596f,mengting,experimental,2026-03-02 17:02:18.091707+00,,5,,,,,
+1f11a317-a736-4b40-bad7-6f5f12230855,varun,experimental,2026-02-25 06:03:00.726655+00,2026-02-25 06:04:34.789+00,7,,10,1,,
+2087cbd1-37b3-4c20-87f7-cbf7567a3885,participant8,experimental,2026-02-27 05:57:11.180483+00,,5,Reflect,,,,
+21f06274-a3f3-4530-8938-e8ab95a0ca10,local_test_bot_final,control,2026-02-25 05:58:13.146682+00,,5,,,,,
+2a09a941-6b33-4d0e-b713-17d26da1ef2c,participant7,control,2026-03-04 01:23:20.732765+00,2026-03-04 01:26:15.91+00,3,,2,4,,"1. The main stressful situation discussed involves the User feeling overwhelmed by multiple deadlines, including coding an interface due the next day, preparing for their father's birthday, and another assignment due on Friday. 
+
+2. The AI suggested cognitive reframing to shift the User's perspective from ""I must finish"" to ""I will prioritize my tasks and do my best,"" along with creating a prioritized list of tasks and breaking them down into smaller, manageable steps.
+
+3. The User responded positively to the reframed perspective but sought further clarification on how to break down their tasks, indicating a willingness to engage with the coping strategies provided."
+2abecd60-286c-46f9-80cb-1ed6df7df3ed,participant6,experimental,2026-03-02 04:17:08.816847+00,2026-03-02 04:18:25.261+00,10,Vent,9,3,,"1. The main stressful situation discussed was the User's experience of grief following the death of someone close to them.  
+2. The AI suggested coping strategies such as allowing oneself to feel and process emotions, reflecting on specific thoughts or feelings, and taking moments to breathe and be present with those emotions.  
+3. The User responded with uncertainty about what to share and ultimately preferred not to engage further, indicating a need for space and time to process their feelings."
+2c6d74a7-ee2e-4403-baae-d1803ec729ad,summary_test_user,experimental,2026-02-25 22:08:10.162438+00,,5,Reflect,,,,
+332aaeec-3843-465b-b21a-276ce90df014,mengting,control,2026-03-02 19:31:09.344793+00,,5,,,,,
+37708da9-cf6c-42b4-beed-75afadc443b0,participant8,experimental,2026-02-28 02:16:38.116384+00,,5,Reflect,,,,
+3b8affb5-30b8-4219-ba18-f2b46355d48d,participant2,experimental,2026-02-26 20:04:47.805295+00,2026-02-26 20:13:35.955+00,6,,5,3,,"1. The main stressful situation discussed was the user's overwhelming workload, which included balancing a part-time job, multiple large homework assignments, and group projects. 
+
+2. The AI suggested breaking down tasks into smaller, manageable steps and setting specific, achievable goals for each section of the user's assignments to reduce feelings of overwhelm.
+
+3. The user responded positively to the suggested strategies, expressing that the revised breakdown of their ML assignment felt good and indicating a plan to divide sections to work on each day."
+4117e679-b9a3-4cbb-abd6-5988e8759280,mengting,experimental,2026-02-25 17:08:15.925784+00,2026-02-25 17:14:10.683+00,5,Reflect,5,3,,
+429d4163-d971-4b47-8d3c-82bc3bee8970,mengting,experimental,2026-02-26 02:03:21.135971+00,2026-02-26 02:04:08.797+00,5,Reflect,5,3,,"1. The main stressful situation discussed was the User's difficulty in structuring their qualitative project, particularly in identifying themes from interview data and managing the coding process.  
+2. The AI suggested coping strategies such as breaking the coding process into smaller parts, setting achievable goals, taking regular breaks, and establishing a structured routine.  
+3. The User appeared open to implementing a structured routine to help manage their work stress."
+43193273-a1fd-47e8-91bc-741d03474fad,participant7,control,2026-03-03 03:39:38.796036+00,2026-03-03 03:40:16.005+00,1,,1,3,,"1. The main topic discussed was the User's overall calmness, with an invitation to explore any lingering stress or thoughts they might have. 
+2. The AI suggested identifying any specific thoughts or beliefs related to potential stress, employing a cognitive-behavioral approach to encourage self-reflection. 
+3. The User did not express any immediate concerns or stressors, indicating a positive state of mind and a lack of need for further exploration at that moment."
+48c101dc-c69c-43f3-b6a4-9cc625ed97ba,participant3,control,2026-02-28 04:38:22.433931+00,,5,,,,,
+499adbed-b123-4cb7-9a5b-65c20602064f,participant4,experimental,2026-03-02 15:09:55.467179+00,,3,,,,,
+4b9870b3-cb5f-4ba3-b483-b9148b478041,participant7,control,2026-02-28 03:00:36.322122+00,2026-02-28 03:01:25.618+00,2,,1,1,Didn't have much to share today haha,"1. The main stressful situation discussed was the User's past stress, which they were encouraged to identify and address. 
+2. The AI suggested focusing on specific thoughts or beliefs related to the User's stress, employing a cognitive-behavioral therapy (CBT) technique to explore and challenge these thoughts. 
+3. The User responded positively by sharing their appreciation for the nice weather but did not directly address a specific stressful thought or belief."
+53c4912b-2525-4ad3-8253-fae55d5aa447,mengting,experimental,2026-02-25 21:33:51.921338+00,2026-02-25 21:45:17.972+00,5,Reflect,5,3,,
+5499b6fe-bc1b-4cf5-9804-c73cb6a61e4f,participant5,control,2026-03-01 21:46:50.718507+00,,4,,,,,
+5b53e9bb-af61-4567-9604-6d8c1d0ba436,participant5,control,2026-02-27 02:19:04.683652+00,,8,,,,,
+5ed4ad48-e22f-4727-afa9-7d56159f22e6,participant4,experimental,2026-03-02 15:23:47.918245+00,2026-03-02 15:26:53.261+00,0,Vent,0,4,Saturday night feedback simulation,"1. The main stressful situation discussed was the user's feelings about not being able to enjoy a trip with their closest friends, despite having a good time with a different group. 
+2. The AI suggested focusing on the present moment to enjoy the experience and reminded the user of coping strategies like breaking tasks into manageable steps for when they return to their workload. 
+3. The user responded positively by expressing a desire to enjoy the current moment rather than think about work, indicating an acceptance of the AI's advice."
+654bba70-4924-4388-a794-bc2190e8063f,participant4,experimental,2026-03-03 02:48:20.427505+00,2026-03-03 02:53:41.416+00,2,Coping Strategies,2,3,,"1. The main stressful situation discussed was the user's exhaustion from a busy weekend and the pressure to complete presentations and a quiz, leading to concerns about managing their workload and energy levels. 
+
+2. The AI suggested coping strategies such as prioritizing rest, using the Pomodoro method for focused work, creating an outline for the presentations, and incorporating short breaks throughout the day to recharge.
+
+3. The user responded positively to the suggestions, agreeing to focus on rest and planning for breaks, while expressing some concern about feeling tired the next day, indicating a willingness to implement the strategies discussed."
+66b119b0-60d3-419a-93d3-6df46985a737,participant7,control,2026-02-27 03:43:37.535959+00,2026-02-27 03:47:34.774+00,4,,3,3,I think it helped! But the fact that the AI kept asking questions and never terminated was a little bit annoying. I had to eventually manually terminate the chat but I still felt obligated to keep talking to the AI.,"1. The main stressful situation discussed was the user's feelings of failure after a poor interview performance, compounded by issues of procrastination and stress related to preparation. 
+2. The AI suggested cognitive reframing techniques, identifying cognitive distortions, and setting specific, actionable goals, such as scheduling a mock interview and practicing with LeetCode while explaining the thought process. 
+3. The user responded positively, acknowledging the need for change and committing to actionable steps, such as contacting their guidance advisor and incorporating daily practice into their routine."
+68eac187-a36c-4623-ab06-96ecb84ad9b6,participant3,control,2026-03-02 02:34:21.089299+00,2026-03-02 02:38:36.958+00,4,,2,4,,"1. The main stressful situation discussed was the User's concern about their physical recovery after running a marathon, particularly their fear of being unable to move and complete necessary tasks in the following days. 
+
+2. The AI suggested cognitive reframing to help the User view their recovery positively, encouraged scheduling gentle walks or stretches, and emphasized the importance of rest and icing to support recovery.
+
+3. The User responded positively to the suggestions, expressing encouragement and a willingness to plan for gradual movement, while also acknowledging their need for rest and a good night's sleep to aid recovery."
+693ce8b0-0a30-4a76-b94e-781020ea6c0e,varun,experimental,2026-02-25 06:30:23.696674+00,,9,Coping Strategies,,,,
+6a26b42a-de5d-42a5-9a04-1558a8836858,test_exp_user,experimental,2026-02-25 06:09:28.766121+00,,5,Vent,,,,
+6f7da52e-cb38-420e-8bbd-7a595bf64a98,participant1,control,2026-03-01 02:06:48.459137+00,,4,,,,,
+7680c955-065a-44bc-954b-8faa7431140f,varun,control,2026-02-25 05:50:57.153298+00,,7,,,,,
+768fe59c-93d1-482b-a590-1bf7584f1ce0,participant2,experimental,2026-03-03 02:01:00.044184+00,2026-03-03 02:04:18.068+00,2,Reflect,1,4,,"1. The main stressful situation discussed was the User's ongoing fatigue and heavy workload, which has been affecting their energy levels despite using some coping strategies. 
+2. The AI suggested coping strategies such as breaking tasks into smaller steps, incorporating regular rest and relaxation into the User's routine, and scheduling specific times for enjoyable activities like reading and spending time outdoors. 
+3. The User responded positively, expressing a willingness to try the suggested strategies and feeling good about planning for relaxation and outdoor activities."
+7b916320-8c71-47a2-8c52-a98a4a4d9991,varun1,experimental,2026-02-25 15:33:59.542309+00,2026-02-25 15:34:28.292+00,7,,9,3,,
+7eb2a316-8c13-4766-813e-7133170afc92,participant6,experimental,2026-02-28 05:27:43.691553+00,2026-02-28 05:28:57.427+00,10,Coping Strategies,7,5,,"1. The main stressful situation discussed was the user's feelings of sadness and overwhelm caused by unexpected events in their life. 
+2. The AI suggested identifying specific thoughts and feelings associated with these unexpected events and recommended using distraction techniques by engaging in enjoyable or calming activities as a coping strategy. 
+3. The user responded by acknowledging their tendency to distract themselves when feeling sad, indicating a willingness to explore and incorporate the suggested coping strategies."
+807a240a-4386-4df0-99b3-c4cd8a9ec9e8,participant3,control,2026-02-26 20:31:41.525488+00,2026-02-26 20:39:25.857+00,8,,7,2,started out strong but it felt like the llm abandoned CBT after the first few questions and instead just gave general questions.,"1. The main stressful situation discussed was the User's feeling of not having enough time to complete all their assignments amidst a heavy workload and additional responsibilities.
+2. The AI suggested cognitive reframing to challenge the User's belief of not being able to finish everything, encouraged prioritizing tasks, and recommended specific strategies like working on an assignment and putting the phone on ""Do Not Disturb"" to minimize distractions.
+3. The User responded positively by identifying actionable steps, such as starting on their homework and planning to study for an exam, indicating a willingness to implement the suggested strategies."
+80b75a65-ccd9-444a-93c3-bc7e53d7c047,mengting,control,2026-02-26 01:49:21.358899+00,,5,,,,,
+83d5b82d-48d1-498d-943f-f52511ecb1c7,summary_test_user,experimental,2026-02-25 22:07:49.309733+00,,8,,,,,"1. The main stressful situation discussed is the user's overwhelming anxiety about an upcoming midterm exam for their history class, compounded by a lack of preparation. 
+2. The AI suggested using a behavioral activation technique by setting a timer for 15 minutes of focused reading followed by a 5-minute break to combat avoidance and ""all or nothing"" thinking. 
+3. The user did not explicitly respond to the suggestion in the transcript, but their acknowledgment of feeling overwhelmed indicates a recognition of their situation and a potential openness to the proposed strategy."
+85c9b38c-cfc4-4f58-9195-80a3942a19b0,participant6,experimental,2026-02-27 04:28:26.83013+00,2026-02-27 04:30:10.197+00,7,,8,3,,"1. The main stressful situation discussed was the user's feeling of being overwhelmed by too much work, which contributed to their overall stress levels. 
+2. The AI suggested using Cognitive Behavioral Therapy (CBT) techniques to identify specific thoughts and feelings related to the user's stress, as well as exploring the physical and emotional effects of that stress to find coping strategies. 
+3. The user responded by expressing uncertainty about their specific thoughts and feelings, indicating a need for further exploration and support in understanding their stress."
+8727c190-c4f8-4713-b7c1-3492e36598ae,participant8,experimental,2026-03-01 08:58:18.074066+00,,5,Reflect,,,,
+8ccef2b8-3d3e-4036-a0e9-36954fe28c72,rugved,experimental,2026-02-25 06:40:42.723751+00,,5,Coping Strategies,,,,
+90e84f95-0e1d-4411-9db0-de12937f27bc,participant1,control,2026-02-26 23:18:21.244289+00,,3,,,,,
+9cd55123-0376-4bed-96d4-0aed70ca9049,participant1,control,2026-03-03 02:08:15.722313+00,,0,,,,,
+9f726e5b-ee27-402e-8404-3554d03830bd,mengting,experimental,2026-02-26 03:36:54.291565+00,,4,Reflect,,,,
+a0ac6d66-6656-417c-8d10-2260d07d51aa,participant8,experimental,2026-03-02 02:01:28.370855+00,,3,Reflect,,,,
+a203d473-8990-40cb-a65d-c6d96791158c,rugved,control,2026-02-25 17:05:34.122728+00,2026-02-25 17:06:06.635+00,8,,6,4,,
+a4bcc7d3-dd53-4dc9-988a-cafeae18ed52,onboard_test_user,experimental,2026-02-25 06:25:50.803505+00,,5,,,,,
+a720bc32-dfcd-4a50-b38d-418b0f505e49,local_test_bot,control,2026-02-25 05:54:06.006988+00,,5,,,,,
+a9aef07b-2c7c-4c81-b022-15367b0e5223,local_test_bot2,control,2026-02-25 05:56:05.15449+00,,5,,,,,
+aa856826-086f-4f62-b53d-6559b38784a0,varun,experimental,2026-02-25 06:29:32.921495+00,2026-02-25 06:30:13.568+00,9,Coping Strategies,5,3,,
+ad261ab7-67dd-4998-8d15-427239a5e7b6,participant8,experimental,2026-03-03 07:32:01.879687+00,,2,Reflect,,,,
+ad2779c3-c6c0-4d98-bbc2-7c55dd610b17,varun,control,2026-02-25 06:00:46.529021+00,2026-02-25 06:01:35.227+00,8,,2,4,,
+b59dc5c6-33fa-4aac-b27d-9e1ab5bb3987,participant6,experimental,2026-03-03 15:50:39.062131+00,2026-03-03 15:51:35.115+00,9,Reflect,3,4,,"1. The main stressful situation discussed is the user's overwhelming workload and the impact of staying up all night, which has led to feelings of stress and procrastination.  
+2. The AI suggested reflecting on specific thoughts and emotions related to the user's workload and procrastination, encouraging the identification of underlying beliefs to address the issue.  
+3. The user acknowledged the situation by mentioning procrastination but did not provide further details or express a clear response to the AI's suggestions."
+ba9a9e5f-178a-423f-8054-40f372be6c2a,participant4,experimental,2026-03-02 15:10:58.779885+00,2026-03-02 15:20:10.356+00,8,Action Plan,6,3,Wednesday night feedback simulation,"1. The main stressful situation discussed was the user's overwhelming workload due to multiple projects and unpredictable assignment demands from professors.  
+2. The AI suggested breaking down tasks into manageable steps, using time management techniques like the Pomodoro method (25 minutes of focused work followed by a 5-minute break), and encouraged collaboration with the user's team to clarify tasks and distribute the workload.  
+3. The user responded positively, expressing confidence in the plan and looking forward to discussing project organization with their team, indicating a willingness to engage with the suggested strategies."
+be839500-3daa-4eeb-81c4-baec13a41156,varun,experimental,2026-02-25 06:16:19.332734+00,2026-02-25 06:17:29.219+00,5,Coping Strategies,5,3,,
+bec6fb43-4589-4264-a954-5a5b61fcd1d1,varun,control,2026-02-25 05:37:36.211555+00,,8,,5,,,
+becfafa0-5cc4-4873-8c94-7526f656145a,participant8,experimental,2026-03-01 02:14:12.454037+00,,5,Reflect,,,,
+c204800b-0d0a-44e9-aa50-4de1bf93c851,memory_test_user,experimental,2026-02-25 21:45:45.101024+00,,8,,,,,
+c4421a4d-e958-4cc6-b06a-690ef1a4ac0c,varun,experimental,2026-02-26 03:44:47.351126+00,,8,Reflect,,,,
+c4a1dfac-4f1e-4214-b02e-d3be51fc7bd5,mengting,control,2026-02-25 21:06:29.938379+00,2026-02-25 21:14:06.099+00,4,,5,3,,
+c57502ae-3651-40e8-accb-cf93d669be56,varun,experimental,2026-02-25 06:05:21.434461+00,,10,Reflect,,,,
+c5f06e59-fe5b-4132-9a6d-bad69aa9cb86,mengting,experimental,2026-02-26 01:57:47.868681+00,2026-02-26 02:02:58.277+00,5,Reflect,4,2,,"1. The main stressful situation discussed was the User's difficulty in structuring their qualitative project, particularly in identifying meaningful themes from interview data and managing the iterative coding process. 
+
+2. The AI suggested coping strategies such as breaking down the coding process into smaller, manageable parts, setting achievable goals for each session, taking regular breaks, and establishing a structured routine to transition back to work after breaks.
+
+3. The User responded positively to the suggestions, expressing openness to trying a structured routine to help ease back into their work after breaks, indicating a willingness to experiment with the proposed strategies."
+c963ac16-acb5-458e-931f-0f8738c41e8e,mengting,experimental,2026-02-25 21:28:58.565408+00,2026-02-25 21:33:12.356+00,5,Reflect,5,3,,
+c995c433-c4ab-49d9-acf1-7bd28bb3fbc7,participant2,experimental,2026-02-27 03:34:39.139437+00,2026-02-27 03:37:30.338+00,3,Reflect,3,2,,"1. The main stressful situation discussed was the user's workload, specifically the completion of tasks and managing stress related to work responsibilities. 
+2. The AI suggested using the coping strategy of breaking down larger tasks into smaller, manageable pieces to reduce overwhelm and enhance productivity, emphasizing the importance of reflecting on effective strategies. 
+3. The user responded positively, expressing satisfaction and a sense of accomplishment from completing smaller tasks, indicating that they found the strategy helpful and motivating."
+c99ab0fe-716f-4030-9e51-3950f3b23173,test_exp_user,experimental,2026-02-25 06:10:31.392003+00,,5,Reflect,,,,
+d8a31993-605b-4236-b476-2d793a015a1f,rugved,experimental,2026-02-25 06:40:04.260481+00,2026-02-25 06:40:31.743+00,5,,5,3,,
+da48083f-21ce-460d-9735-3dfc38a708df,participant4,experimental,2026-03-02 15:27:23.531181+00,2026-03-02 15:34:04.521+00,4,Action Plan,2,4,Sunday night feedback simulation,"1. The main stressful situation discussed was the user's transition back to responsibilities after a long weekend trip, specifically managing a quiz and a project proposal due soon, amidst a busy schedule. 
+
+2. The AI suggested using the Pomodoro method for time management, creating a structured schedule for the user's tasks, and emphasized the importance of taking breaks and getting rest to maintain focus and energy.
+
+3. The user responded positively, agreeing with the proposed plan and expressing that it aligned with their priorities, indicating a willingness to implement the suggested strategies."
+dcd79f15-47c0-4054-9c80-f6ca55c41da2,participant5,control,2026-03-04 02:01:04.255083+00,2026-03-04 02:28:49.685+00,6,,6,2,The adressing of all-or-nothing styled thinking provided a room to reflect back on how I approach problems,"1. The main stressful situation discussed was the User's concern about potentially needing to redo data collection due to forgetting to end a previous conversation, which caused anxiety about their participation being unrecorded. 
+
+2. The AI suggested cognitive reframing techniques, such as considering more balanced thoughts and identifying cognitive distortions like all-or-nothing thinking, along with actionable steps like reaching out to an instructor for clarification.
+
+3. The User initially found the suggestions confusing and reported that they did not significantly impact their stress level, but they eventually recognized their tendency toward all-or-nothing thinking, indicating some progress in self-awareness."
+de399d79-a63f-4940-95bc-eb51e9810064,varun,control,2026-02-25 06:04:45.813358+00,2026-02-25 06:07:29.393+00,8,,9,4,,
+df8d3e70-39d6-4dfa-9a2d-c7bc8ba369b7,varun,experimental,2026-02-25 06:17:35.087694+00,,5,Reflect,,,,
+e09adc8c-8480-450e-a523-5b46cf55079a,participant3,control,2026-03-03 02:36:32.931361+00,2026-03-03 02:43:09.52+00,2,,1,3,The ai seemed better today. Didn’t just ask endless questions and the conversation naturally died out when it needed to,"1. The main stressful situation discussed was the user's anxiety about their grade in a class, particularly concerning low participation and concerns about exam performance.  
+2. The AI suggested cognitive reframing to challenge negative beliefs about the user's ability to achieve a good grade, and encouraged setting specific goals to improve participation, such as contributing to class discussions and replying to discussion posts.  
+3. The user responded positively, expressing a willingness to implement the suggested strategies and indicating they felt good about their plan to manage participation."
+e4044abc-ac98-4b5e-a9f5-9fd4244b4633,mengting,control,2026-03-02 19:26:51.055929+00,,5,,,,,
+e694d67d-847d-4987-975c-99beb2861395,participant8,experimental,2026-03-01 08:58:07.749502+00,,5,,,,,
+ec17b9e1-024a-498e-a72c-84cd44e43699,mengting,control,2026-02-25 21:24:07.600481+00,,5,,,,,
+efa63818-0a2d-4edd-bb5a-9fce59384ee3,varun,control,2026-02-25 15:33:22.286453+00,2026-02-25 15:33:41.504+00,8,,9,3,,
+f1272bbe-d587-456f-8810-ecb66f468657,participant3,control,2026-02-27 03:01:11.140191+00,,5,,,,,
+f2c510b6-c92f-4756-bb3c-cf2d84f3ed1a,participant1,control,2026-02-28 03:59:22.843314+00,,1,,,,,
+f32911ee-8cc4-4f01-b4d2-e8fbb28de947,mengting,experimental,2026-02-25 19:37:24.734545+00,2026-02-25 19:55:34.68+00,6,Action Plan,5,3,,
+f487f8e6-7161-4333-88f5-f554d536624c,mengting,experimental,2026-02-25 17:06:47.231692+00,2026-02-25 17:07:26.212+00,9,,5,3,,
+f5a7a1d6-eead-403b-913f-0526f7dbadc2,mengting,control,2026-02-26 22:12:27.72979+00,,3,,,,,
+f73d0f3a-0414-44e0-87b0-e7294acc5afc,mengting,control,2026-02-26 01:37:48.214142+00,2026-02-26 01:49:11.217+00,5,,5,3,,"1. The main stressful situation discussed is the User's anxiety about an upcoming meeting regarding potential research opportunities and feeling overwhelmed by homework from a course (cs6641). 
+2. The AI suggested a problem-solving approach by encouraging the User to identify specific questions or topics to discuss in the meeting and to write down key points to review beforehand, which are common cognitive-behavioral therapy (CBT) techniques for managing stress and preparation anxiety. 
+3. The User expressed feelings of being overwhelmed but did not provide a direct response to the AI's coping strategies, indicating a need for further exploration of their thoughts and beliefs about their homework."

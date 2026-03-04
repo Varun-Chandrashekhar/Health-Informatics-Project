@@ -1,0 +1,172 @@
+
+=========================================
+To: User [varun]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in one interaction. Before this conversation, you reported an average stress level of 5 out of 10. There is no available data on your stress level after the conversation. During the session on March 1, 2026, you initiated the interaction with a greeting, and the assistant responded by acknowledging potential stress and inquiring about specific thoughts or beliefs contributing to it.
+
+Thank you for participating in this study.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=varun
+=========================================
+
+
+
+=========================================
+To: User [mengting]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in a total of 3 interactions. Your average reported stress level before these conversations was 5 out of 10. Notably, there is no available data on your stress levels after the conversations. On 3/2/2026, one interaction was recorded where you mentioned stress related to coursework and projects. The conversation focused on identifying specific thoughts or beliefs contributing to your stress. 
+
+Thank you for participating in this study.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=mengting
+=========================================
+
+
+
+=========================================
+To: User [participant2]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in one interaction. Your reported stress levels decreased from an average of 2/10 before conversations to 1/10 afterward. During your recent session, you discussed the impact of fatigue and a heavy workload on your energy levels. You explored strategies like breaking tasks into smaller steps and incorporating relaxation and outdoor activities into your routine. You expressed a positive outlook towards these strategies and planned to allocate time for reading and spending time outdoors. 
+
+Thank you for participating.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant2
+=========================================
+
+
+
+=========================================
+To: User [participant8]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in 6 interactions. Your average reported stress level before conversations was 4.2 out of 10. During this period, you discussed topics such as job offers and study habits. You expressed feelings of confusion about choosing between multiple job offers, with a preference for remote work due to its flexibility. Additionally, you shared experiences of productivity, particularly when changing your study environment, and acknowledged the need for rest after a stressful week. Your reflections indicate a focus on balancing work, study, and personal preferences.
+
+Thank you for participating.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant8
+=========================================
+
+
+
+=========================================
+To: User [participant5]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in two interactions. Your average reported stress level before conversations was 5/10, which increased slightly to 6/10 afterward. During your sessions, you expressed happiness about the weekend and discussed a concern about potentially needing to redo data collection. This situation initially caused anxiety, but you later recognized a tendency toward all-or-nothing thinking, indicating some progress in self-awareness. Although the suggestions provided did not significantly impact your stress level, you identified cognitive distortions in your thought patterns. 
+
+Thank you for participating in this study.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant5
+=========================================
+
+
+
+=========================================
+To: User [participant7]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in three interactions. Your average reported stress level before conversations was 2/10, which decreased to 1.3/10 after the discussions. 
+
+In your sessions, you explored various topics. On 2/27, you reflected on past stress and appreciated the nice weather. On 3/2, you reported a calm day with no immediate concerns. On 3/3, you discussed feeling overwhelmed by multiple deadlines and commitments. You engaged with cognitive reframing techniques to manage these stressors, showing a willingness to explore coping strategies.
+
+Thank you for participating in this study.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant7
+=========================================
+
+
+
+=========================================
+To: User [participant6]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in 3 interactions. Your reported stress levels averaged 9.7/10 before conversations and decreased to 6.3/10 afterward. 
+
+In recent sessions, you discussed feelings of sadness and overwhelm due to unexpected events, grief from a personal loss, and stress from an overwhelming workload. You explored coping strategies such as distraction techniques and reflecting on emotions. You expressed a willingness to try new strategies for managing sadness and acknowledged the impact of procrastination on your stress levels. During discussions about grief, you indicated a need for space and time to process your emotions.
+
+Thank you for participating in this study.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant6
+=========================================
+
+
+
+=========================================
+To: User [participant1]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in 4 interactions. Your average reported stress level before conversations was 3 out of 10. During these sessions, you expressed feeling calm on some days and shared experiences of managing responsibilities and expectations on others. You mentioned using deep breathing as an automatic stress management technique, which you find calming. In one session, you discussed the challenges of delegation and considered writing things down to clarify expectations. On another day, you reported having a good day without stress. 
+
+Thank you for participating in this study. Your engagement is valuable.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant1
+=========================================
+
+
+
+=========================================
+To: User [participant4]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in 6 interactions, with your average reported stress decreasing from 2.8/10 before conversations to 2/10 afterward. Your discussions primarily focused on managing a demanding workload and balancing responsibilities with personal time. You explored strategies like breaking tasks into manageable steps and using time management techniques such as the Pomodoro method. You also expressed a positive outlook towards these strategies and showed a willingness to implement them, even amidst a busy schedule. Your recent experiences included a weekend trip, which you enjoyed, and transitioning back to academic responsibilities, where you prioritized rest and structured planning.
+
+Thank you for participating.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant4
+=========================================
+
+
+
+=========================================
+To: User [participant3]
+Subject: Your 5-Day Study Reflection
+=========================================
+Hello Participant,
+
+Over the past 5 days, you engaged in 4 interactions, with an average reported stress level of 3.3/10 before conversations, which decreased to 1.7/10 after. Your recent sessions highlighted various themes, including processing emotions related to past relationships, managing physical recovery post-marathon, and addressing academic concerns. You explored cognitive reframing techniques to shift perspectives and identified actionable steps, such as journaling, gentle movement, and increasing class participation. Your responses indicated a willingness to implement these strategies, and you expressed feeling encouraged and positive about your plans. 
+
+Thank you for participating in this study.
+
+[Stats Attachment / Dashboard Link]
+View your full interactive graph here: 
+http://localhost:3000/reflection?user_id=participant3
+=========================================

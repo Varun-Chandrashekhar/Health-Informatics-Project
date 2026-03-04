@@ -185,6 +185,17 @@ function PreChatForm() {
               </svg>
             ) : "Start Conversation"}
           </button>
+          
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              router.push(`/reflection?user_id=${userId}`);
+            }}
+            className="w-full mt-4 bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-bold py-4 px-4 rounded-xl transition-all shadow-sm hover:shadow flex justify-center items-center"
+          >
+            View My 5-Day Reflection
+          </button>
         </form>
       </div>
     </main>
