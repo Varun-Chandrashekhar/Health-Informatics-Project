@@ -92,7 +92,7 @@ function PreChatForm() {
       
     } catch (err: any) {
       console.error(err);
-      setError("Failed to start session. Please try again or check your connection.");
+      setError(`Failed to start session: ${err.message || JSON.stringify(err)}. Please try again.`);
       setLoading(false);
     }
   };
