@@ -51,13 +51,10 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
   };
 
   const handleEndSession = () => {
-    if (window.confirm("Are you sure you want to end this session?")) {
-      setIsEnding(true);
-      // Wait briefly for UI, then push to feedback
-      setTimeout(() => {
-        router.push(`/feedback/${sessionId}`);
-      }, 400);
-    }
+    setIsEnding(true);
+    setTimeout(() => {
+      router.push(`/feedback/${sessionId}`);
+    }, 400);
   };
 
   return (

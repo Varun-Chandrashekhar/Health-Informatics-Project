@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/utils/AuthContext';
+import { supabase } from '@/utils/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +13,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Password setup state
+  const [showPasswordSetup, setShowPasswordSetup] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [setupError, setSetupError] = useState<string | null>(null);
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [pendingUserId, setPendingUserId] = useState('');
 
   // If already logged in, redirect
   if (!loading && user) {
@@ -40,15 +49,53 @@ export default function LoginPage() {
     const result = await login(trimmedUser, trimmedPass);
 
     if (result.success) {
-      // Auth context will update, useEffect in consuming components handles redirect
-      // But we can proactively route here too
-      // Re-read from the login result -- check if admin
-      // The simplest: just go to / and let page.tsx handle the redirect
-      router.push('/');
+      // Check if this is a default password (password === userId) — prompt to change
+      if (trimmedPass === trimmedUser && trimmedUser !== 'superuser') {
+        setPendingUserId(trimmedUser);
+        setShowPasswordSetup(true);
+        setSubmitting(false);
+      } else {
+        router.push('/');
+      }
     } else {
       setError(result.error || 'Login failed.');
       setSubmitting(false);
     }
+  };
+
+  const handleSetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSetupError(null);
+
+    if (newPassword.length < 3) {
+      setSetupError('Password must be at least 3 characters.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setSetupError('Passwords do not match.');
+      return;
+    }
+
+    setSavingPassword(true);
+
+    const { error } = await supabase
+      .from('users')
+      .update({ password: newPassword })
+      .eq('user_id', pendingUserId);
+
+    if (error) {
+      setSetupError('Failed to save password. Please try again.');
+      setSavingPassword(false);
+      return;
+    }
+
+    // Continue to home
+    router.push('/');
+  };
+
+  const skipPasswordSetup = () => {
+    router.push('/');
   };
 
   if (loading) {
@@ -59,10 +106,83 @@ export default function LoginPage() {
     );
   }
 
+  // Password setup screen
+  if (showPasswordSetup) {
+    return (
+      <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 text-slate-800 p-4 font-sans">
+        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-10 border border-slate-100">
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+              </svg>
+            </div>
+            <h1 className="text-2xl font-extrabold text-slate-900">Set Your Password</h1>
+            <p className="text-slate-400 text-sm mt-1">Welcome, <span className="font-bold text-slate-600">{pendingUserId}</span>! Choose a personal password for future logins.</p>
+          </div>
+
+          {setupError && (
+            <div className="p-4 mb-6 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
+              {setupError}
+            </div>
+          )}
+
+          <form onSubmit={handleSetPassword} className="space-y-5">
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-bold text-slate-700 mb-2">New Password</label>
+              <input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Choose a password"
+                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-300"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-bold text-slate-700 mb-2">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 font-medium focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder:text-slate-300"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingPassword}
+              className="w-full mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-4 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+            >
+              {savingPassword ? (
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : "Save Password"}
+            </button>
+
+            <button
+              type="button"
+              onClick={skipPasswordSetup}
+              className="w-full text-sm text-slate-400 hover:text-slate-600 font-medium transition-colors py-2"
+            >
+              Skip for now
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
+
+  // Login screen
   return (
     <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 text-slate-800 p-4 font-sans">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-10 border border-slate-100">
-        
+
         {/* Logo / Header */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-600/20">
@@ -73,7 +193,7 @@ export default function LoginPage() {
           <h1 className="text-2xl font-extrabold text-slate-900">CBT Assistant</h1>
           <p className="text-slate-400 text-sm mt-1">Sign in with your participant ID</p>
         </div>
-        
+
         {error && (
           <div className="p-4 mb-6 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2">
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +202,7 @@ export default function LoginPage() {
             {error}
           </div>
         )}
-        
+
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label htmlFor="userId" className="block text-sm font-bold text-slate-700 mb-2">Username</label>
