@@ -49,24 +49,63 @@ export async function POST(req: Request) {
     }
 
     // Apply memory context for both control and established experimental users
+    // Uses FULL user messages (not AI summaries) for rich, persistent cross-session memory
     if (sessionInfo.condition === 'control' || hasPersona) {
-      // Fetch past session summaries for memory context across sessions
-      // We removed the condition constraint so context is retained safely irrespective of crossover bounds
+      // Step 1: Fetch past sessions (most recent 15) with their dates and engagement style
       const { data: pastSessions, error: pastErr } = await supabase
         .from('sessions')
-        .select('session_summary, started_at')
+        .select('id, started_at, user_need')
         .eq('user_id', sessionInfo.user_id)
         .neq('id', sessionId)
-        .not('session_summary', 'is', null)
+        .not('completed_at', 'is', null)
         .order('started_at', { ascending: false })
-        .limit(30);
-        
+        .limit(15);
+
       if (!pastErr && pastSessions && pastSessions.length > 0) {
-        const chronological = pastSessions.reverse();
-        const memoryContext = `\n\n=== CRITICAL INSTRUCTION: PAST SESSION MEMORY ===\nBelow are summarized transcripts of your previous conversations with this user from past days. You MUST review these to recognize the user, recall their past context (names, situations), and track their coping strategies over time.\n\n[START PAST SUMMARIES]\n` + 
-          chronological.map((s, i) => `Session ${i + 1} (${new Date(s.started_at).toLocaleDateString()}): ${s.session_summary}`).join('\n\n') + `\n[END PAST SUMMARIES]\n=================================================\n`;
-        
-        systemPrompt += memoryContext;
+        const pastSessionIds = pastSessions.map(s => s.id);
+
+        // Step 2: Fetch all USER messages from those sessions (not assistant messages)
+        const { data: pastMessages, error: msgErr } = await supabase
+          .from('messages')
+          .select('session_id, content, created_at')
+          .in('session_id', pastSessionIds)
+          .eq('role', 'user')
+          .order('created_at', { ascending: true });
+
+        if (!msgErr && pastMessages && pastMessages.length > 0) {
+          // Step 3: Group messages by session and build context
+          const msgBySession: Record<string, string[]> = {};
+          for (const msg of pastMessages) {
+            if (!msgBySession[msg.session_id]) {
+              msgBySession[msg.session_id] = [];
+            }
+            msgBySession[msg.session_id].push(msg.content);
+          }
+
+          // Step 4: Build chronological memory context (oldest first)
+          const chronological = pastSessions.reverse();
+          const sessionBlocks = chronological
+            .filter(s => msgBySession[s.id] && msgBySession[s.id].length > 0)
+            .map((s, i) => {
+              const dateStr = new Date(s.started_at).toLocaleDateString();
+              const goalStr = s.user_need ? ` — Goal: ${s.user_need}` : '';
+              const userMessages = msgBySession[s.id];
+              // Cap each session's content at ~2000 chars to manage token budget
+              let content = userMessages.map(m => `- "${m}"`).join('\n');
+              if (content.length > 2000) {
+                content = content.substring(0, 2000) + '\n  [... truncated]';
+              }
+              return `Session ${i + 1} (${dateStr}${goalStr}):\n${content}`;
+            });
+
+          if (sessionBlocks.length > 0) {
+            const memoryContext = `\n\n=== CRITICAL INSTRUCTION: PAST SESSION MEMORY ===\nBelow are the user's own words from previous conversations. You MUST review these carefully to:\n- Recognize returning context (names, events, situations they mentioned)\n- Track progress on issues they raised before\n- Reference specific things they said when relevant\n- Notice patterns in their stress and concerns over time\n\n[START PAST USER MESSAGES]\n` +
+              sessionBlocks.join('\n\n') +
+              `\n[END PAST USER MESSAGES]\n=================================================\n`;
+
+            systemPrompt += memoryContext;
+          }
+        }
       }
     }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from 'react';
+import { useState, useEffect, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/utils/supabase';
 
@@ -14,6 +14,50 @@ export default function FeedbackPage({ params }: { params: Promise<{ session_id:
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Summary state
+  const [summary, setSummary] = useState<string | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+
+  // Kick off summarization as soon as the page loads (while user fills out feedback)
+  useEffect(() => {
+    fetch('/api/summarize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId })
+    }).catch(err => console.error("Background summarization failed:", err));
+  }, [sessionId]);
+
+  // Poll for the summary after feedback is submitted
+  const fetchSummary = useCallback(async () => {
+    setSummaryLoading(true);
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    const poll = async (): Promise<void> => {
+      const { data } = await supabase
+        .from('sessions')
+        .select('session_summary')
+        .eq('id', sessionId)
+        .single();
+
+      if (data?.session_summary) {
+        setSummary(data.session_summary);
+        setSummaryLoading(false);
+        return;
+      }
+
+      attempts++;
+      if (attempts < maxAttempts) {
+        await new Promise(r => setTimeout(r, 2000));
+        return poll();
+      } else {
+        setSummaryLoading(false);
+      }
+    };
+
+    await poll();
+  }, [sessionId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,15 +76,11 @@ export default function FeedbackPage({ params }: { params: Promise<{ session_id:
         .eq('id', sessionId);
 
       if (updateError) throw updateError;
-      
-      // Fire and forget summarization - do not block the user UI
-      fetch('/api/summarize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId })
-      }).catch(err => console.error("Summarization hook failed:", err));
 
       setSubmitted(true);
+
+      // Start polling for the summary
+      fetchSummary();
     } catch (err: any) {
       console.error(err);
       setError("Failed to submit feedback. Please try again.");
@@ -57,7 +97,32 @@ export default function FeedbackPage({ params }: { params: Promise<{ session_id:
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Thank you for checking in today.</h2>
-          <p className="text-slate-500 mb-8">Your responses have been recorded successfully. You can close this tab now and check back in with us anytime using the same link.</p>
+          <p className="text-slate-500 mb-8">Your responses have been recorded successfully.</p>
+
+          {/* Conversation Summary Section */}
+          <div className="text-left bg-blue-50 border border-blue-100 p-6 rounded-2xl mb-6">
+            <div className="flex items-center gap-2 mb-3">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <h3 className="font-bold text-blue-900">Your Conversation Summary</h3>
+            </div>
+            {summaryLoading ? (
+              <div className="flex items-center gap-3 py-4">
+                <svg className="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p className="text-sm text-blue-600 font-medium">Generating your conversation summary...</p>
+              </div>
+            ) : summary ? (
+              <p className="text-sm text-slate-700 leading-relaxed">{summary}</p>
+            ) : (
+              <p className="text-sm text-slate-500 italic">A summary of your conversation could not be generated at this time. Don't worry — your full conversation has still been saved.</p>
+            )}
+          </div>
+
+          <p className="text-slate-400 text-sm mb-6">You can close this tab now and check back in with us anytime using the same link.</p>
           
           <div className="pt-6 border-t border-slate-100 text-left bg-slate-50 p-6 rounded-2xl">
             <h3 className="font-bold text-slate-800 mb-2">Need immediate support?</h3>

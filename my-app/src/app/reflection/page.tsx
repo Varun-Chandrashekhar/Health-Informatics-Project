@@ -1,27 +1,32 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/utils/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ArrowLeft } from 'lucide-react';
 
-function ReflectionContent() {
-  const searchParams = useSearchParams();
-  const userId = searchParams.get('user_id');
+export default function ReflectionPage() {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Auth guard
   useEffect(() => {
-    if (!userId) {
-      setError("No User ID provided.");
-      setLoading(false);
-      return;
+    if (!authLoading && !user) {
+      router.replace('/login');
     }
+  }, [authLoading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
 
     const fetchReflectionData = async () => {
       try {
-        const response = await fetch(`/api/reflection?user_id=${userId}`);
+        const response = await fetch(`/api/reflection?user_id=${user.userId}`);
         const result = await response.json();
 
         if (response.ok) {
@@ -37,15 +42,12 @@ function ReflectionContent() {
     };
 
     fetchReflectionData();
-  }, [userId]);
+  }, [user]);
 
-  if (!userId) {
+  if (authLoading || !user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50 text-slate-800">
-        <div className="p-8 bg-white shadow-xl rounded-2xl max-w-md text-center border border-slate-100">
-          <h2 className="text-xl font-bold mb-4 text-red-500">Missing Identification</h2>
-          <p className="text-slate-500 text-sm">Please make sure you access this page with a valid user link.</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="animate-pulse w-10 h-10 bg-blue-600 rounded-full"></div>
       </div>
     );
   }
@@ -70,6 +72,7 @@ function ReflectionContent() {
         <div className="p-8 bg-white shadow-xl rounded-2xl max-w-md text-center border border-slate-100">
           <h2 className="text-xl font-bold mb-4 text-red-500">Error</h2>
           <p className="text-slate-500 text-sm">{error}</p>
+          <button onClick={() => router.push('/')} className="mt-6 text-sm font-semibold text-blue-600 hover:text-blue-700">← Back to Home</button>
         </div>
       </div>
     );
@@ -78,9 +81,16 @@ function ReflectionContent() {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
       <div className="max-w-3xl mx-auto space-y-8">
-        
+
         {/* Header */}
         <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+          <a
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 mb-4 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </a>
           <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Your 5-Day Reflection</h1>
           <p className="text-slate-600">A look back at your interactions and stress levels over the past 5 days.</p>
         </div>
@@ -120,40 +130,40 @@ function ReflectionContent() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data.chartData} margin={{ top: 5, right: 30, left: -20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                  <XAxis 
-                    dataKey="date" 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#64748B', fontSize: 12 }} 
-                    dy={10} 
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#64748B', fontSize: 12 }}
+                    dy={10}
                   />
-                  <YAxis 
-                    domain={[0, 10]} 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tick={{ fill: '#64748B', fontSize: 12 }} 
+                  <YAxis
+                    domain={[0, 10]}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#64748B', fontSize: 12 }}
                   />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
                   />
                   <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="preStress" 
-                    name="Pre-Chat Stress" 
-                    stroke="#f97316" 
-                    strokeWidth={3} 
-                    dot={{ r: 4, strokeWidth: 2 }} 
-                    activeDot={{ r: 6 }} 
+                  <Line
+                    type="monotone"
+                    dataKey="preStress"
+                    name="Pre-Chat Stress"
+                    stroke="#f97316"
+                    strokeWidth={3}
+                    dot={{ r: 4, strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="postStress" 
-                    name="Post-Chat Stress" 
-                    stroke="#10b981" 
-                    strokeWidth={3} 
-                    dot={{ r: 4, strokeWidth: 2 }} 
-                    activeDot={{ r: 6 }} 
+                  <Line
+                    type="monotone"
+                    dataKey="postStress"
+                    name="Post-Chat Stress"
+                    stroke="#10b981"
+                    strokeWidth={3}
+                    dot={{ r: 4, strokeWidth: 2 }}
+                    activeDot={{ r: 6 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -162,17 +172,5 @@ function ReflectionContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function ReflectionPage() {
-  return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="animate-pulse w-10 h-10 bg-blue-600 rounded-full"></div>
-      </div>
-    }>
-      <ReflectionContent />
-    </Suspense>
   );
 }

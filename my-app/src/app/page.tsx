@@ -1,74 +1,78 @@
 "use client";
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useState, Suspense, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/utils/AuthContext';
 import { supabase } from '@/utils/supabase';
+import { LogOut } from 'lucide-react';
 
-function PreChatForm() {
-  const searchParams = useSearchParams();
+export default function HomePage() {
   const router = useRouter();
-  
-  const userId = searchParams.get('user_id');
-  const condition = searchParams.get('condition') || 'control'; // default to control
-  
+  const { user, loading: authLoading, logout } = useAuth();
+
   const [preStress, setPreStress] = useState<number>(5);
   const [userNeed, setUserNeed] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFirstSession, setIsFirstSession] = useState<boolean | null>(null);
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (userId && condition === 'experimental') {
+    if (!authLoading && !user) {
+      router.replace('/login');
+    }
+  }, [authLoading, user, router]);
+
+  // Redirect admin to admin page
+  useEffect(() => {
+    if (!authLoading && user?.isAdmin) {
+      router.replace('/admin');
+    }
+  }, [authLoading, user, router]);
+
+  // Check first session for experimental users
+  useEffect(() => {
+    if (user && user.condition === 'experimental') {
       const checkFirstSession = async () => {
         const { data, error } = await supabase
           .from('sessions')
           .select('id')
-          .eq('user_id', userId)
+          .eq('user_id', user.userId)
           .eq('condition', 'experimental')
           .limit(1);
-          
+
         if (!error && data) {
           setIsFirstSession(data.length === 0);
         }
       };
       checkFirstSession();
     }
-  }, [userId, condition]);
-
-  if (!userId) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50 text-slate-800">
-        <div className="p-8 bg-white shadow-xl rounded-2xl max-w-md text-center border border-slate-100">
-          <h2 className="text-xl font-bold mb-4 text-red-500">Missing Identification</h2>
-          <p className="text-slate-500 text-sm">Please make sure you are accessing this application using the exact link provided in your study email (it should include `?user_id=...`).</p>
-        </div>
-      </div>
-    );
-  }
+  }, [user]);
 
   const handleStartSession = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     setLoading(true);
     setError(null);
 
     try {
-      // 1. Ensure the user exists in our DB (if not, insert them)
+      // 1. Ensure the user exists in our DB
       const { error: userError } = await supabase
         .from('users')
-        .upsert({ user_id: userId }, { onConflict: 'user_id', ignoreDuplicates: true });
-        
+        .upsert({ user_id: user.userId }, { onConflict: 'user_id', ignoreDuplicates: true });
+
       if (userError) throw userError;
 
-      // 2. Check if this is the "First Session" for the Experimental Condition to route them to Onboarding
+      // 2. Check first session for experimental
       let isFirst = false;
-      if (condition === 'experimental') {
+      if (user.condition === 'experimental') {
         const { data: userSessions, error: sessionErr } = await supabase
           .from('sessions')
           .select('id')
-          .eq('user_id', userId)
+          .eq('user_id', user.userId)
           .eq('condition', 'experimental')
           .limit(1);
-          
+
         if (sessionErr) throw sessionErr;
         isFirst = userSessions.length === 0;
       }
@@ -77,19 +81,19 @@ function PreChatForm() {
       const { data: currentSession, error: insertError } = await supabase
         .from('sessions')
         .insert({
-          user_id: userId,
-          condition: condition,
+          user_id: user.userId,
+          condition: user.condition,
           pre_stress: preStress,
-          user_need: (condition === 'experimental' && !isFirst) ? userNeed : null
+          user_need: (user.condition === 'experimental' && !isFirst) ? userNeed : null
         })
         .select()
         .single();
-        
+
       if (insertError) throw insertError;
 
-      // 4. Redirect to chat interface
+      // 4. Redirect to chat
       router.push(`/chat/${currentSession.id}`);
-      
+
     } catch (err: any) {
       console.error(err);
       setError(`Failed to start session: ${err.message || JSON.stringify(err)}. Please try again.`);
@@ -97,34 +101,62 @@ function PreChatForm() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+  };
+
+  if (authLoading || !user || user.isAdmin) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="animate-pulse w-10 h-10 bg-blue-600 rounded-full"></div>
+      </div>
+    );
+  }
+
   return (
     <main className="flex items-center justify-center min-h-screen bg-slate-50 text-slate-800 p-4 font-sans">
       <div className="w-full max-w-lg bg-white rounded-3xl shadow-lg p-10 border border-slate-100">
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">Daily Check-in</h1>
+
+        {/* User Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Daily Check-in</h1>
+            <p className="text-slate-400 text-sm">Signed in as <span className="font-bold text-slate-600">{user.userId}</span></p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
+        </div>
+
         <p className="text-slate-500 text-sm mb-8">Before we start chatting, please let us know how you're feeling right now.</p>
-        
+
         {error && <div className="p-4 mb-6 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">{error}</div>}
-        
+
         <form onSubmit={handleStartSession} className="space-y-10">
-          
+
           <div className="space-y-4">
             <label className="block text-sm font-bold text-slate-700">Right now, how stressed do you feel?</label>
             <div className="flex items-center justify-between text-xs font-bold text-slate-400 mb-3 px-1">
               <span>0 (Not at all)</span>
               <span>10 (Extremely)</span>
             </div>
-            <input 
-              type="range" 
-              min="0" 
-              max="10" 
-              value={preStress} 
+            <input
+              type="range"
+              min="0"
+              max="10"
+              value={preStress}
               onChange={(e) => setPreStress(parseInt(e.target.value))}
               className="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 transition-all hover:bg-slate-300"
             />
             <div className="text-center font-bold text-3xl text-blue-600 pt-4 tracking-tight">{preStress}</div>
           </div>
 
-          {condition === 'experimental' && (
+          {user.condition === 'experimental' && (
             <div className="space-y-4 pt-8 border-t border-slate-100">
               {isFirstSession === false && (
                 <>
@@ -173,9 +205,9 @@ function PreChatForm() {
             </div>
           )}
 
-          <button 
-            type="submit" 
-            disabled={loading || (condition === 'experimental' && isFirstSession === false && !userNeed)}
+          <button
+            type="submit"
+            disabled={loading || (user.condition === 'experimental' && isFirstSession === false && !userNeed)}
             className="w-full mt-8 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 px-4 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
           >
             {loading ? (
@@ -185,13 +217,19 @@ function PreChatForm() {
               </svg>
             ) : "Start Conversation"}
           </button>
-          
+
           <button
             type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              router.push(`/reflection?user_id=${userId}`);
-            }}
+            onClick={() => router.push('/history')}
+            className="w-full mt-4 bg-white border-2 border-blue-200 hover:border-blue-400 text-blue-700 font-bold py-4 px-4 rounded-xl transition-all shadow-sm hover:shadow flex justify-center items-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            View Past Sessions
+          </button>
+
+          <button
+            type="button"
+            onClick={() => router.push('/reflection')}
             className="w-full mt-4 bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-bold py-4 px-4 rounded-xl transition-all shadow-sm hover:shadow flex justify-center items-center"
           >
             View My 5-Day Reflection
@@ -199,17 +237,5 @@ function PreChatForm() {
         </form>
       </div>
     </main>
-  );
-}
-
-export default function Home() {
-  return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <div className="animate-pulse w-10 h-10 bg-blue-600 rounded-full"></div>
-      </div>
-    }>
-      <PreChatForm />
-    </Suspense>
   );
 }
