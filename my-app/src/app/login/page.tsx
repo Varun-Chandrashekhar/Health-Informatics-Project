@@ -37,7 +37,7 @@ export default function LoginPage() {
     setSubmitting(true);
     setError(null);
 
-    const trimmedUser = userId.trim().toLowerCase();
+    const trimmedUser = userId.trim();
     const trimmedPass = password.trim();
 
     if (!trimmedUser || !trimmedPass) {
@@ -51,7 +51,7 @@ export default function LoginPage() {
     if (result.success) {
       // Check if this is a default password (password === userId) — prompt to change
       // Only require p01 - p10 to change their password
-      if (trimmedPass === trimmedUser && trimmedUser.startsWith('p')) {
+      if (trimmedPass === trimmedUser && trimmedUser.toUpperCase().startsWith('P')) {
         setPendingUserId(trimmedUser);
         setShowPasswordSetup(true);
         setSubmitting(false);

@@ -163,10 +163,10 @@ export default function HomePage() {
                   <label className="block text-sm font-bold text-slate-700 mb-3">How would you like to engage today?</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
-                      { value: 'Vent', label: 'Just vent & express feelings' },
-                      { value: 'Reflect', label: 'Reflect on thoughts and emotions' },
-                      { value: 'Coping Strategies', label: 'Receive structured coping strategies' },
-                      { value: 'Action Plan', label: 'Make a small action plan / goal' }
+                      { value: 'Emotional expression', label: 'Express your feelings' },
+                      { value: 'Cognitive reflection', label: 'Reflect on your thoughts' },
+                      { value: 'Coping strategies', label: 'Get coping strategies' },
+                      { value: 'Action planning', label: 'Make a plan' }
                     ].map((option) => (
                       <label
                         key={option.value}

@@ -10,7 +10,7 @@ const openai = createOpenAI({
 
 export async function POST(req: Request) {
   try {
-    const { messages, sessionId } = await req.json();
+    const { messages, sessionId, initiate } = await req.json();
 
     if (!sessionId) {
       return new Response("Missing Session ID", { status: 400 });
@@ -109,51 +109,66 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. Save User Message to Database
-    const userMessage = messages[messages.length - 1];
-    if (userMessage.role === 'user') {
-      await supabase.from('messages').insert({
-        session_id: sessionId,
-        user_id: sessionInfo.user_id,
-        role: 'user',
-        content: userMessage.content,
-      });
+    // 3. Determine message list to send to the model
+    let messagesToSend = messages;
 
-      // Special Case: Auto-extract the persona if this is the experimental onboarding session
-      if (!hasPersona && messages.length > 2) {
-        try {
-          // Use AI to extract if they have decided on a tone yet
-          const extractionPrompt = `
+    if (initiate && (!messages || messages.length === 0)) {
+      // Build an internal context message so the AI opens the conversation
+      const stressLevel = sessionInfo.pre_stress ?? '(unknown)';
+      const modeLabel = sessionInfo.user_need ? ` The user's chosen mode for this session is: "${sessionInfo.user_need}".` : '';
+      messagesToSend = [
+        {
+          role: 'user',
+          content: `[SESSION START — do not display this to the user] The user is starting a new session. Their current stress level is ${stressLevel}/10.${modeLabel} Please open the conversation in a warm, natural way that acknowledges their stress level and gently invites them to share more. Do not ask them to pick a mode again.`
+        }
+      ];
+    } else {
+      // 3a. Save incoming user message to DB (normal flow)
+      const userMessage = messages[messages.length - 1];
+      if (userMessage?.role === 'user') {
+        await supabase.from('messages').insert({
+          session_id: sessionId,
+          user_id: sessionInfo.user_id,
+          role: 'user',
+          content: userMessage.content,
+        });
+
+        // Special Case: Auto-extract the persona if this is the experimental onboarding session
+        if (!hasPersona && messages.length > 2) {
+          try {
+            // Use AI to extract if they have decided on a tone yet
+            const extractionPrompt = `
           Analyze the conversation history. Did the user clearly define a preferred chatbot personality/tone?
           If yes, summarize that exact personality in 1-2 thoughtful sentences.
           If no, return null.
           `;
-          
-          const { object } = await generateObject({
-            model: openai('gpt-4o-mini'),
-            schema: z.object({
-              persona: z.string().nullable().describe("The user's chosen persona summary, or null if they haven't decided yet.")
-            }),
-            prompt: extractionPrompt + "\n\nChat History:\n" + messages.map((m: any) => `${m.role}: ${m.content}`).join("\n"),
-          });
+            
+            const { object } = await generateObject({
+              model: openai('gpt-4o-mini'),
+              schema: z.object({
+                persona: z.string().nullable().describe("The user's chosen persona summary, or null if they haven't decided yet.")
+              }),
+              prompt: extractionPrompt + "\n\nChat History:\n" + messages.map((m: any) => `${m.role}: ${m.content}`).join("\n"),
+            });
 
-          if (object.persona) {
-            await supabase.from('users').update({ experimental_persona: object.persona }).eq('user_id', sessionInfo.user_id);
-            console.log("Auto-saved persona:", object.persona);
+            if (object.persona) {
+              await supabase.from('users').update({ experimental_persona: object.persona }).eq('user_id', sessionInfo.user_id);
+              console.log("Auto-saved persona:", object.persona);
+            }
+          } catch (e) {
+            console.error("Failed to auto-extract persona:", e);
           }
-        } catch (e) {
-          console.error("Failed to auto-extract persona:", e);
         }
       }
     }
 
     // 4. Stream chat from OpenAI
     const result = await streamText({
-      model: openai('gpt-4o'), // Or use gpt-4-turbo depending on preference
+      model: openai('gpt-4o'),
       system: systemPrompt,
-      messages,
+      messages: messagesToSend,
       async onFinish({ text }) {
-        // Save Assistant Message to Database
+        // Save Assistant Message to Database (skip for initiate if it's an internal prompt)
         await supabase.from('messages').insert({
           session_id: sessionId,
           user_id: sessionInfo.user_id,

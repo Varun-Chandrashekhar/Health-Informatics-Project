@@ -6,11 +6,45 @@ import { useEffect, useRef, useState } from 'react';
 import { Send, LogOut } from 'lucide-react';
 import { use } from 'react';
 
+// Renders assistant message content as second-person bullet points.
+// Splits on sentence boundaries or newlines and presents as a list.
+function AssistantMessage({ content }: { content: string }) {
+  // Split into bullet items: prefer existing newlines, otherwise split by sentences
+  const rawLines = content.split(/\n+/).filter(l => l.trim().length > 0);
+  
+  // If the content is already multi-line, use those lines directly.
+  // Otherwise split by sentence endings to create bullets.
+  const bullets: string[] =
+    rawLines.length > 1
+      ? rawLines.map(l => l.replace(/^[-•*]\s*/, '').trim())
+      : content
+          .split(/(?<=[\.\?\!])\s+/)
+          .map(s => s.trim())
+          .filter(s => s.length > 0);
+
+  if (bullets.length <= 1) {
+    // Short single-sentence: render inline, no bullet
+    return <span className="whitespace-pre-wrap">{content}</span>;
+  }
+
+  return (
+    <ul className="space-y-1.5 leading-relaxed list-none pl-0">
+      {bullets.map((bullet, i) => (
+        <li key={i} className="flex items-start gap-2">
+          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0" />
+          <span>{bullet}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function ChatPage({ params }: { params: Promise<{ session_id: string }> }) {
   const router = useRouter();
   const { session_id: sessionId } = use(params);
+  const [initiated, setInitiated] = useState(false);
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
     api: '/api/chat',
     body: {
       sessionId: sessionId
@@ -20,6 +54,43 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isEnding, setIsEnding] = useState(false);
+
+  // Trigger AI first message on mount
+  useEffect(() => {
+    if (initiated) return;
+    setInitiated(true);
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [], sessionId, initiate: true }),
+    })
+      .then(async (res) => {
+        if (!res.ok || !res.body) return;
+        // Stream the response and append as an assistant message via append()
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          // Vercel AI data stream format: lines starting with '0:' contain text chunks
+          const chunk = decoder.decode(value, { stream: true });
+          for (const line of chunk.split('\n')) {
+            if (line.startsWith('0:')) {
+              try {
+                fullText += JSON.parse(line.slice(2));
+              } catch {}
+            }
+          }
+        }
+        if (fullText) {
+          append({ role: 'assistant', content: fullText });
+        }
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionId]);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -63,7 +134,7 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
       <header className="flex-none bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
         <div>
           <h1 className="text-lg font-bold text-slate-800">CBT Assistant</h1>
-          <p className="text-xs text-slate-500 font-medium tracking-wide">Take a few minutes to talk about what's on your mind</p>
+          <p className="text-xs text-slate-500 font-medium tracking-wide">Take a few minutes to talk about what&apos;s on your mind</p>
         </div>
         
         <button 
@@ -93,8 +164,8 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
               <div className="w-8 h-8 bg-blue-600 rounded-full animate-pulse"></div>
             </div>
             <div>
-              <p className="font-semibold text-slate-600 mb-1">Hello there.</p>
-              <p className="text-sm line-clamp-2">Whenever you're ready, feel free to say hi or share what brings you here today.</p>
+              <p className="font-semibold text-slate-600 mb-1">Getting ready…</p>
+              <p className="text-sm">Your session is starting. The assistant will greet you shortly.</p>
             </div>
           </div>
         )}
@@ -108,7 +179,10 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
                   : 'bg-white text-slate-800 border border-slate-100 rounded-bl-sm'
                 }`}
             >
-              <span className="whitespace-pre-wrap">{m.content}</span>
+              {m.role === 'assistant'
+                ? <AssistantMessage content={m.content} />
+                : <span className="whitespace-pre-wrap">{m.content}</span>
+              }
             </div>
           </div>
         ))}
