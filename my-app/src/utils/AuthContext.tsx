@@ -54,7 +54,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       if (error || !data) {
-        return { success: false, error: 'User not found.' };
+        console.error('Login query error:', error);
+        // PGRST116 = "JSON object requested, multiple (or no) rows returned" = user not found
+        if (error?.code === 'PGRST116') {
+          return { success: false, error: `User "${userId}" not found. Check your username and try again.` };
+        }
+        return { success: false, error: error?.message || 'User not found.' };
       }
 
       if (data.password !== password && data.password !== btoa(password)) {
