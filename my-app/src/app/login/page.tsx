@@ -22,8 +22,8 @@ export default function LoginPage() {
   const [savingPassword, setSavingPassword] = useState(false);
   const [pendingUserId, setPendingUserId] = useState('');
 
-  // If already logged in, redirect
-  if (!loading && user) {
+  // If already logged in, redirect (block redirect if we are currently prompting for password setup)
+  if (!loading && user && !showPasswordSetup) {
     if (user.isAdmin) {
       router.replace('/admin');
     } else {
@@ -50,7 +50,8 @@ export default function LoginPage() {
 
     if (result.success) {
       // Check if this is a default password (password === userId) — prompt to change
-      if (trimmedPass === trimmedUser && trimmedUser !== 'superuser') {
+      // Only require p01 - p10 to change their password
+      if (trimmedPass === trimmedUser && trimmedUser.startsWith('p')) {
         setPendingUserId(trimmedUser);
         setShowPasswordSetup(true);
         setSubmitting(false);
@@ -81,7 +82,7 @@ export default function LoginPage() {
 
     const { error } = await supabase
       .from('users')
-      .update({ password: newPassword })
+      .update({ password: btoa(newPassword) }) // Applying basic encryption (Base64)
       .eq('user_id', pendingUserId);
 
     if (error) {

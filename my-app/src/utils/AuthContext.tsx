@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: false, error: 'User not found.' };
       }
 
-      if (data.password !== password) {
+      if (data.password !== password && data.password !== btoa(password)) {
         return { success: false, error: 'Incorrect password.' };
       }
 
