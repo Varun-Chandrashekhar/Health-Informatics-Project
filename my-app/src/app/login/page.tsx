@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/utils/AuthContext';
-import { supabase } from '@/utils/supabase';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -81,13 +80,16 @@ export default function LoginPage() {
 
     setSavingPassword(true);
 
-    const { error } = await supabase
-      .from('users')
-      .update({ password: btoa(newPassword) }) // Applying basic encryption (Base64)
-      .eq('user_id', pendingUserId);
+    const res = await fetch('/api/set-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: pendingUserId, newPassword }),
+    });
 
-    if (error) {
-      setSetupError('Failed to save password. Please try again.');
+    const json = await res.json();
+
+    if (!res.ok || !json.success) {
+      setSetupError(json.error || 'Failed to save password. Please try again.');
       setSavingPassword(false);
       return;
     }

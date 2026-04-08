@@ -3,10 +3,10 @@ import { supabase } from '@/utils/supabase';
 
 export async function POST(req: Request) {
   try {
-    const { userId, newPassword } = await req.json();
+    const { userId, newPassword, fullName } = await req.json();
 
-    if (!userId || !newPassword) {
-      return Response.json({ error: 'Missing userId or newPassword.' }, { status: 400 });
+    if (!userId || !newPassword || !fullName) {
+      return Response.json({ error: 'Missing userId, newPassword, or fullName.' }, { status: 400 });
     }
 
     if (newPassword.length < 3) {
@@ -18,7 +18,10 @@ export async function POST(req: Request) {
 
     const { error } = await supabase
       .from('users')
-      .update({ password: hashed })
+      .update({ 
+        password: hashed,
+        full_name: fullName
+      })
       .eq('user_id', userId);
 
     if (error) {

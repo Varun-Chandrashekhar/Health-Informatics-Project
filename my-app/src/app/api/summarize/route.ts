@@ -45,10 +45,13 @@ export async function POST(req: Request) {
 
     const summaryPrompt = `
     Analyze the following therapy/support session transcript between a User and an AI Assistant.
-    Provide a highly concise, 2-3 sentence summary of:
-    1. The main stressful situation or topic discussed.
-    2. The specific coping strategies, CBT techniques, or advice that were used or suggested by the AI.
-    3. How the user responded to them.
+    Write a highly concise, 2-3 sentence summary addressed directly to the user in second person (use "you" and "your").
+    Cover:
+    1. The main stressful situation or topic you discussed.
+    2. The specific coping strategies, CBT techniques, or advice that were suggested to you.
+    3. How you responded to them.
+
+    Example style: "You discussed feeling overwhelmed by upcoming exams. The assistant helped you reframe your thoughts using cognitive restructuring and suggested breaking your study sessions into smaller chunks. You responded positively and identified one concrete step to try before your next session."
 
     Transcript:
     ${transcript}

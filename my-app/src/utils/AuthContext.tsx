@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/utils/supabase';
 
 interface AuthUser {
   userId: string;
@@ -47,31 +46,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (userId: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('user_id, password, assigned_condition, is_admin')
-        .eq('user_id', userId)
-        .single();
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, password }),
+      });
 
-      if (error || !data) {
-        console.error('Login query error:', error);
-        // PGRST116 = "JSON object requested, multiple (or no) rows returned" = user not found
-        if (error?.code === 'PGRST116') {
-          return { success: false, error: `User "${userId}" not found. Check your username and try again.` };
-        }
-        return { success: false, error: error?.message || 'User not found.' };
+      const json = await res.json();
+
+      if (!res.ok || !json.success) {
+        return { success: false, error: json.error || 'Login failed.' };
       }
 
-      if (data.password !== password && data.password !== btoa(password)) {
-        return { success: false, error: 'Incorrect password.' };
-      }
-
-      const authUser: AuthUser = {
-        userId: data.user_id,
-        condition: data.assigned_condition || 'control',
-        isAdmin: data.is_admin || false,
-      };
-
+      const authUser: AuthUser = json.user;
       setUser(authUser);
       localStorage.setItem('cbt_auth', JSON.stringify(authUser));
       return { success: true };
