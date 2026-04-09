@@ -18,22 +18,12 @@ export default function LoginPage() {
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [setupFullName, setSetupFullName] = useState('');
   const [setupError, setSetupError] = useState<string | null>(null);
   const [savingPassword, setSavingPassword] = useState(false);
   const [pendingUserId, setPendingUserId] = useState('');
 
-  // Forgot Password state
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [recoveryUserId, setRecoveryUserId] = useState('');
-  const [recoveryFullName, setRecoveryFullName] = useState('');
-  const [recoveryNewPassword, setRecoveryNewPassword] = useState('');
-  const [recoveryError, setRecoveryError] = useState<string | null>(null);
-  const [recoverySubmitting, setRecoverySubmitting] = useState(false);
-  const [recoverySuccess, setRecoverySuccess] = useState(false);
-
   // If already logged in, redirect (block redirect if we are currently prompting for password setup)
-  if (!loading && user && !showPasswordSetup && !showForgotPassword) {
+  if (!loading && user && !showPasswordSetup) {
     if (user.isAdmin) {
       router.replace('/admin');
     } else {
@@ -78,11 +68,6 @@ export default function LoginPage() {
     e.preventDefault();
     setSetupError(null);
 
-    if (!setupFullName.trim()) {
-      setSetupError('Please enter your full name.');
-      return;
-    }
-
     if (newPassword.length < 3) {
       setSetupError('Password must be at least 3 characters.');
       return;
@@ -98,7 +83,7 @@ export default function LoginPage() {
     const res = await fetch('/api/set-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: pendingUserId, newPassword, fullName: setupFullName }),
+      body: JSON.stringify({ userId: pendingUserId, newPassword }),
     });
 
     const json = await res.json();
@@ -113,149 +98,11 @@ export default function LoginPage() {
     router.push('/');
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setRecoveryError(null);
-
-    if (!recoveryUserId.trim() || !recoveryFullName.trim() || !recoveryNewPassword.trim()) {
-      setRecoveryError('Please fill in all fields.');
-      return;
-    }
-
-    if (recoveryNewPassword.length < 3) {
-      setRecoveryError('Password must be at least 3 characters.');
-      return;
-    }
-
-    setRecoverySubmitting(true);
-
-    const res = await fetch('/api/reset-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        userId: recoveryUserId.trim(), 
-        fullName: recoveryFullName.trim(), 
-        newPassword: recoveryNewPassword 
-      }),
-    });
-
-    const json = await res.json();
-
-    if (!res.ok || !json.success) {
-      setRecoveryError(json.error || 'Reset failed. Please verify your details.');
-      setRecoverySubmitting(false);
-      return;
-    }
-
-    setRecoverySuccess(true);
-    setRecoverySubmitting(false);
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="animate-pulse w-10 h-10 bg-blue-600 rounded-full"></div>
       </div>
-    );
-  }
-
-  // Forgot Password screen
-  if (showForgotPassword) {
-    return (
-      <main className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-orange-50 text-slate-800 p-4 font-sans">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-10 border border-slate-100">
-          <div className="text-center mb-6">
-            <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
-              </svg>
-            </div>
-            <h1 className="text-2xl font-extrabold text-slate-900">Reset Password</h1>
-            <p className="text-slate-400 text-sm mt-1">Verify your identity to choose a new password.</p>
-          </div>
-
-          {recoverySuccess ? (
-            <div className="space-y-6">
-              <div className="p-4 bg-emerald-50 text-emerald-700 rounded-xl text-sm font-medium border border-emerald-100 text-center">
-                Password updated successfully! You can now sign in with your new password.
-              </div>
-              <button
-                onClick={() => {
-                  setShowForgotPassword(false);
-                  setRecoverySuccess(false);
-                }}
-                className="w-full bg-slate-900 text-white font-bold py-4 px-4 rounded-xl transition-all"
-              >
-                Back to Sign In
-              </button>
-            </div>
-          ) : (
-            <>
-              {recoveryError && (
-                <div className="p-4 mb-6 bg-red-50 text-red-600 rounded-xl text-sm font-medium border border-red-100">
-                  {recoveryError}
-                </div>
-              )}
-
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <div>
-                  <label htmlFor="recoveryUserId" className="block text-sm font-bold text-slate-700 mb-2">Participant ID</label>
-                  <input
-                    id="recoveryUserId"
-                    type="text"
-                    value={recoveryUserId}
-                    onChange={(e) => setRecoveryUserId(e.target.value)}
-                    placeholder="e.g. P01"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="recoveryFullName" className="block text-sm font-bold text-slate-700 mb-2">Your Full Name</label>
-                  <input
-                    id="recoveryFullName"
-                    type="text"
-                    value={recoveryFullName}
-                    onChange={(e) => setRecoveryFullName(e.target.value)}
-                    placeholder="Enter your full name"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="recoveryNewPassword" className="block text-sm font-bold text-slate-700 mb-2">New Password</label>
-                  <input
-                    id="recoveryNewPassword"
-                    type="password"
-                    value={recoveryNewPassword}
-                    onChange={(e) => setRecoveryNewPassword(e.target.value)}
-                    placeholder="Choose a new password"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={recoverySubmitting}
-                  className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-4 rounded-xl transition-all shadow-md disabled:opacity-70 flex justify-center items-center"
-                >
-                  {recoverySubmitting ? (
-                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                  ) : "Update Password"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(false)}
-                  className="w-full text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors py-2"
-                >
-                  Back to Login
-                </button>
-              </form>
-            </>
-          )}
-        </div>
-      </main>
     );
   }
 
@@ -281,18 +128,6 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSetPassword} className="space-y-4">
-            <div>
-              <label htmlFor="setupFullName" className="block text-sm font-bold text-slate-700 mb-2">First and Last Name</label>
-              <input
-                id="setupFullName"
-                type="text"
-                value={setupFullName}
-                onChange={(e) => setSetupFullName(e.target.value)}
-                placeholder="Spelled exactly as on your ID"
-                className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all shadow-sm"
-              />
-            </div>
-
             <div>
               <label htmlFor="newPassword" className="block text-sm font-bold text-slate-700 mb-2">Private Password</label>
               <input
@@ -372,15 +207,8 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <div className="flex justify-between items-center mb-2">
+            <div className="mb-2">
               <label htmlFor="password" className="block text-sm font-bold text-slate-700">Password</label>
-              <button 
-                type="button"
-                onClick={() => setShowForgotPassword(true)}
-                className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                Forgot Password?
-              </button>
             </div>
             <div className="relative">
               <input
