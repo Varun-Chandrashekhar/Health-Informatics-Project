@@ -42,7 +42,7 @@ function AssistantMessage({ content }: { content: string }) {
 export default function ChatPage({ params }: { params: Promise<{ session_id: string }> }) {
   const router = useRouter();
   const { session_id: sessionId } = use(params);
-  const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
     api: '/api/chat',
     body: {
       sessionId: sessionId
@@ -56,7 +56,11 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
   // initiation fetch twice (useState initial value is seen as false by both calls).
   const initiatedRef = useRef(false);
 
-  // Trigger AI first message on mount
+  // Trigger AI first message on mount.
+  // IMPORTANT: We use setMessages (not append) to inject the assistant's opening
+  // message directly. useChat's append() not only adds a message but also fires a
+  // second POST to /api/chat, which causes the AI to generate a duplicate greeting.
+  // setMessages writes to the messages array without any network call.
   useEffect(() => {
     if (initiatedRef.current) return;
     initiatedRef.current = true;
@@ -68,7 +72,7 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
     })
       .then(async (res) => {
         if (!res.ok || !res.body) return;
-        // Stream the response and append as an assistant message via append()
+        // Stream the response and collect the full text
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let fullText = '';
@@ -86,7 +90,8 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
           }
         }
         if (fullText) {
-          append({ role: 'assistant', content: fullText });
+          // setMessages writes directly — no follow-up API call triggered
+          setMessages([{ id: 'init-msg', role: 'assistant', content: fullText }]);
         }
       })
       .catch(() => {});
