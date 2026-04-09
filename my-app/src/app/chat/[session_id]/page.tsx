@@ -42,8 +42,6 @@ function AssistantMessage({ content }: { content: string }) {
 export default function ChatPage({ params }: { params: Promise<{ session_id: string }> }) {
   const router = useRouter();
   const { session_id: sessionId } = use(params);
-  const [initiated, setInitiated] = useState(false);
-
   const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
     api: '/api/chat',
     body: {
@@ -54,11 +52,14 @@ export default function ChatPage({ params }: { params: Promise<{ session_id: str
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isEnding, setIsEnding] = useState(false);
+  // useRef prevents React Strict Mode's double-effect invocation from firing the
+  // initiation fetch twice (useState initial value is seen as false by both calls).
+  const initiatedRef = useRef(false);
 
   // Trigger AI first message on mount
   useEffect(() => {
-    if (initiated) return;
-    setInitiated(true);
+    if (initiatedRef.current) return;
+    initiatedRef.current = true;
 
     fetch('/api/chat', {
       method: 'POST',
